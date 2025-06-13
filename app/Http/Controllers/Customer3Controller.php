@@ -32,12 +32,12 @@ class Customer3Controller extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255|unique:Customers3,email',
+            'email' => 'nullable|email|max:255|unique:customers3,email',
             'phone' => [
                 'required',
                 'string',
                 'max:20',
-                'unique:Customers3,phone',
+                'unique:customers3,phone',
                 'regex:/^\d{11}$/'
             ],
         ], [

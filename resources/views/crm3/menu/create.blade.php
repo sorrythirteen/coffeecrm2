@@ -5,7 +5,7 @@
 @section('content')
 <h2 class="mb-4">Добавить товар в меню</h2>
 
-<form action="{{ route('Menu2.menu.store') }}" method="POST" class="shadow-sm p-4 rounded bg-white">
+<form action="{{ route('crm3.menu.store') }}" method="POST" class="shadow-sm p-4 rounded bg-white">
     @csrf
 
     <div class="mb-3">
@@ -46,7 +46,7 @@
     </div>
 
     <button type="submit" class="btn btn-primary shadow-sm rounded-pill px-4 py-2 fw-semibold">Добавить</button>
-    <a href="{{ route('Menu2.menu.index') }}" class="btn btn-secondary shadow-sm rounded-pill px-4 py-2 ms-2">Отмена</a>
+    <a href="{{ route('crm3.menu.index') }}" class="btn btn-secondary shadow-sm rounded-pill px-4 py-2 ms-2">Отмена</a>
 </form>
 
 <script>

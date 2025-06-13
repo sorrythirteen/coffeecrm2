@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class Customer1Controller extends Controller
 {
-     public function index(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
 

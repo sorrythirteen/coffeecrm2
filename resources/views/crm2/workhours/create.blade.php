@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Добавить рабочее время CRM 2')
+@section('title', 'Добавление рабочего времени')
 
 @section('content')
 <h2 class="mb-4">Добавить запись рабочего времени</h2>

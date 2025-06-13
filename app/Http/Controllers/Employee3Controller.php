@@ -18,7 +18,7 @@ class Employee3Controller extends Controller
                   ->orWhere('phone', 'like', "%{$search}%");
         }
 
-        $employees = $query->paginate(10);
+        $employees = $query->paginate(40);
         return view('crm3.employees.index', compact('employees'));
     }
 

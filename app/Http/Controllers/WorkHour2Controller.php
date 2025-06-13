@@ -10,9 +10,23 @@ use Carbon\Carbon;
 
 class WorkHour2Controller extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $workHours = WorkHour2::with('employee')->paginate(10); 
+        $search = $request->input('search');
+        
+        $query = WorkHour2::with('employee');
+        
+        if ($search) {
+            $query->whereHas('employee', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('position', 'like', "%{$search}%");
+            })
+            ->orWhere('work_date', 'like', "%{$search}%")
+            ->orWhere('start_time', 'like', "%{$search}%")
+            ->orWhere('end_time', 'like', "%{$search}%");
+        }
+        
+        $workHours = $query->paginate(40); 
         return view('crm2.workhours.index', compact('workHours'));
     }
 

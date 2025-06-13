@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Заказы CRM 1')
+@section('title', 'Заказы')
 
 @section('content')
 <h2 class="mb-4">Заказы</h2>
@@ -12,7 +12,7 @@
             name="search" 
             value="{{ request('search') }}" 
             class="form-control shadow-sm rounded-pill border-primary" 
-            placeholder="Поиск по заказам..."
+            placeholder="Поиск по заказам..."   
         />
         <button type="submit" class="btn btn-primary ms-2 shadow-sm rounded-pill px-4 fw-semibold">
             Искать
@@ -71,20 +71,20 @@
             <td>{{ \Carbon\Carbon::parse($order->order_date)->format('d.m.Y') }}</td>
 
             <td class="text-center" style="white-space: nowrap;">
-                <a href="{{ route('crm3.orders.show', $order) }}" class="btn btn-sm btn-info me-1 shadow-sm rounded-pill">
-                    <i class="bi bi-eye"></i> Просмотр
-                </a>
-                <a href="{{ route('crm3.orders.edit', $order) }}" class="btn btn-sm btn-warning text-white me-1 shadow-sm rounded-pill">
-                    <i class="bi bi-pencil"></i> Редактировать
-                </a>
-                <form action="{{ route('crm3.orders.destroy', $order) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Удалить заказ?')">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-sm btn-danger shadow-sm rounded-pill">
-                        <i class="bi bi-trash"></i> Удалить
-                    </button>
-                </form>
-            </td>
+    <a href="{{ route('crm3.orders.show', $order) }}" class="btn btn-sm btn-info me-1 shadow-sm rounded-pill">
+        <i class="bi bi-eye"></i> Просмотр
+    </a>
+    <a href="{{ route('crm3.orders.edit', $order) }}" class="btn btn-sm btn-warning me-1 shadow-sm rounded-pill">
+        <i class="bi bi-pencil"></i> Редактировать
+    </a>
+    <form action="{{ route('crm3.orders.destroy', $order) }}" method="POST" style="display:inline-block" onsubmit="return confirm('Удалить заказ?')">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-sm btn-danger shadow-sm rounded-pill">
+            <i class="bi bi-trash"></i> Удалить
+        </button>
+    </form>
+</td>
         </tr>
         @endforeach
     </tbody>
@@ -95,5 +95,6 @@
 <div class="alert alert-warning shadow-sm" role="alert">
     Заказы не найдены.
 </div>
+
 @endif
 @endsection

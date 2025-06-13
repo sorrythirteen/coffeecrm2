@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu1;
 use App\Models\Menu2;
 use Illuminate\Http\Request;
 
 class Menu2Controller extends Controller
 {
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->input('search');
 
-    $query = Menu2::query();
+        $query = Menu2::query();
 
-    if ($search) {
-        $query->where('name', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%");
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+        }
+
+        $menuItems = $query->paginate(40);
+
+        return view('crm2.menu.index', compact('menuItems'));
     }
-
-    $menuItems = $query->paginate(10);
-
-    return view('crm2.menu.index', compact('menuItems'));
-}
 
     public function create()
     {
@@ -34,7 +33,21 @@ class Menu2Controller extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
+            'price' => [
+                'required',
+                'numeric',
+                'min:0',
+                'max:99999.99',
+                function ($attribute, $value, $fail) {
+                    $parts = explode('.', $value);
+                    if (strlen($parts[0]) > 5) {
+                        $fail('Целая часть цены не должна превышать 5 цифр');
+                    }
+                }
+            ],
+        ], [
+            'price.max' => 'Максимальная цена не может превышать 99999.99',
+            'price.max_digits' => 'Целая часть цены не должна превышать 5 цифр',
         ]);
 
         Menu2::create($data);
@@ -43,9 +56,9 @@ class Menu2Controller extends Controller
     }
 
     public function show(Menu2 $menu)
-{
-    return view('crm2.menu.show', compact('menu'));
-}
+    {
+        return view('crm2.menu.show', compact('menu'));
+    }
 
     public function edit(Menu2 $menu)
     {
@@ -57,7 +70,21 @@ class Menu2Controller extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
+            'price' => [
+                'required',
+                'numeric',
+                'min:0',
+                'max:99999.99',
+                function ($attribute, $value, $fail) {
+                    $parts = explode('.', $value);
+                    if (strlen($parts[0]) > 5) {
+                        $fail('Целая часть цены не должна превышать 5 цифр');
+                    }
+                }
+            ],
+        ], [
+            'price.max' => 'Максимальная цена не может превышать 99999.99',
+            'price.max_digits' => 'Целая часть цены не должна превышать 5 цифр',
         ]);
 
         $menu->update($data);
@@ -69,5 +96,5 @@ class Menu2Controller extends Controller
     {
         $menu->delete();
         return redirect()->route('crm2.menu.index')->with('success', 'Пункт меню удалён');
-    }
+    }  
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Редактировать клиента')
+@section('title', 'Редактирование клиента')
 
 @section('content')
 <h2>Редактировать клиента</h2>

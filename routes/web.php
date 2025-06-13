@@ -69,6 +69,7 @@ Route::prefix('crm2')->name('crm2.')->group(function () {
     Route::resource('customers', Customer2Controller::class);
     Route::resource('employees', Employee2Controller::class);
     Route::resource('menu', Menu2Controller::class);
+    Route::patch('/crm1/menu/{menu}/update-status', [Menu1Controller::class, 'updateStatus'])->name('crm1.menu.update-status');
     Route::resource('inventory', Inventory2Controller::class);
     Route::resource('orders', Order2Controller::class);
     Route::resource('order-items', OrderItem2Controller::class);
@@ -92,7 +93,5 @@ Route::prefix('crm3')->name('crm3.')->group(function () {
     Route::resource('transactions', Transaction3Controller::class);
     Route::resource('workhours', WorkHour3Controller::class);
     Route::resource('loyalty-programs', LoyaltyProgram3Controller::class);
-    Route::resource('customer-loyalties', CustomerLoyalty3Controller::class);
-    Route::resource('loyalty-transactions', LoyaltyTransaction3Controller::class);
     Route::resource('reviews', ReviewController::class);
 });

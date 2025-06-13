@@ -9,9 +9,24 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reviews = Review::with('customer')->paginate(10);
+        $search = $request->input('search');
+        
+        $query = Review::with('customer');
+        
+        if ($search) {
+            $query->whereHas('customer', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            })
+            ->orWhere('rating', 'like', "%{$search}%")
+            ->orWhere('comment', 'like', "%{$search}%")
+            ->orWhere('status', 'like', "%{$search}%");
+        }
+        
+        $reviews = $query->paginate(40);
         return view('crm3.reviews.index', compact('reviews'));
     }
 

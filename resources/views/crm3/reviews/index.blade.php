@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Отзывы CRM')
+@section('title', 'Отзывы')
 
 @section('content')
 <h2 class="mb-4">Отзывы клиентов</h2>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Просмотр сотрудника CRM 2')
+@section('title', 'Просмотр сотрудника')
 
 @section('content')
 <h2 class="mb-4">Сотрудник: {{ $employee->name }}</h2>

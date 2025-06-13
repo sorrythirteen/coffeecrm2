@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Дашборд CRM 2')
+@section('title', 'Дашборд')
 
 @section('content')
 <div class="row g-3">

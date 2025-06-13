@@ -23,7 +23,7 @@ class Order2Controller extends Controller
             });
         }
 
-        $orders = $query->paginate(10);
+        $orders = $query->paginate(40);
 
         return view('crm2.orders.index', compact('orders'));
     }
@@ -87,57 +87,57 @@ class Order2Controller extends Controller
     }
 
     public function edit(Order2 $order)
-    {
-        $customers = Customer2::all();
-        $menuItems = Menu2::all();
+{
+    $customers = Customer2::all();
+    $menuItems = Menu2::all();
+    $order->load('orderItems');
 
-        $order->load('orderItems');
-
-        return view('crm2.orders.edit', compact('order', 'customers', 'menuItems'));
-    }
+    return view('crm2.orders.edit', compact('order', 'customers', 'menuItems'));
+}
 
     public function update(Request $request, Order2 $order)
-    {
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers2,id',
-            'order_date' => 'required|date',
-            'status' => 'required|in:pending,completed,canceled',
-            'menu_items' => 'required|array',
-            'menu_items.*.selected' => 'nullable|in:1',
-            'menu_items.*.quantity' => 'nullable|integer|min:1',
-        ]);
+{
+    $validated = $request->validate([
+        'customer_id' => 'required|exists:customers2,id',
+        'order_date' => 'required|date',
+        'status' => 'required|in:pending,completed,canceled',
+        'menu_items' => 'required|array',
+        'menu_items.*.selected' => 'nullable|in:1',
+        'menu_items.*.quantity' => 'nullable|integer|min:1',
+    ]);
 
-        $order->customer_id = $validated['customer_id'];
-        $order->order_date = $validated['order_date'];
-        $order->status = $validated['status'];
+    $order->update([
+        'customer_id' => $validated['customer_id'],
+        'order_date' => $validated['order_date'],
+        'status' => $validated['status'],
+    ]);
 
-        $order->orderItems()->delete();
+    $order->orderItems()->delete();
+    $totalAmount = 0;
 
-        $totalAmount = 0;
+    foreach ($validated['menu_items'] as $menuId => $itemData) {
+        if (!empty($itemData['selected']) && isset($itemData['quantity']) && $itemData['quantity'] > 0) {
+            $menuItem = Menu2::find($menuId);
+            if ($menuItem) {
+                $quantity = (int)$itemData['quantity'];
+                $price = $menuItem->price;
 
-        foreach ($validated['menu_items'] as $menuId => $itemData) {
-            if (!empty($itemData['selected']) && isset($itemData['quantity']) && $itemData['quantity'] > 0) {
-                $menuItem = Menu2::find($menuId);
-                if ($menuItem) {
-                    $quantity = (int)$itemData['quantity'];
-                    $price = $menuItem->price;
+                $order->orderItems()->create([
+                    'menu_id' => $menuItem->id,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                ]);
 
-                    $order->orderItems()->create([
-                        'menu_id' => $menuItem->id,
-                        'quantity' => $quantity,
-                        'price' => $price,
-                    ]);
-
-                    $totalAmount += $price * $quantity;
-                }
+                $totalAmount += $price * $quantity;
             }
         }
-
-        $order->total_amount = $totalAmount;
-        $order->save();
-
-        return redirect()->route('crm2.orders.index')->with('success', 'Заказ обновлён');
     }
+
+    $order->total_amount = $totalAmount;
+    $order->save();
+
+    return redirect()->route('crm2.orders.index')->with('success', 'Заказ успешно обновлен');
+}
 
     public function destroy($id)
     {
@@ -146,4 +146,5 @@ class Order2Controller extends Controller
 
         return redirect()->route('crm2.orders.index')->with('success', 'Заказ удалён');
     }
+    
 }

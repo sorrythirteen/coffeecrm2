@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Выбор CRM-системы')
+@section('title', 'Главная страница')
 
 @section('content')
 <div class="container my-5" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 960px;">

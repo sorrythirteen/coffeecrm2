@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Добавить клиента')
+@section('title', 'Добавление клиента')
 
 @section('content')
 <h2 class="mb-4">Добавить клиента</h2>
@@ -25,10 +25,22 @@
     </div>
 
     <div class="mb-3">
-        <label for="phone" class="form-label fw-semibold">Телефон</label>
-        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" class="form-control @error('phone') is-invalid @enderror">
+        <label for="phone" class="form-label fw-semibold">Телефон (только цифры, 11 символов)</label>
+        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}" 
+               class="form-control @error('phone') is-invalid @enderror"
+               pattern="\d{11}" 
+               title="Пожалуйста, введите ровно 11 цифр (без пробелов и других символов)"
+               required>
         @error('phone')
-            <div class="invalid-feedback">{{ $message }}</div>
+            <div class="invalid-feedback">
+                @if($message == 'validation.digits')
+                    Телефон должен содержать ровно 11 цифр
+                @elseif($message == 'validation.numeric')
+                    Телефон должен содержать только цифры
+                @else
+                    {{ $message }}
+                @endif
+            </div>
         @enderror
     </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Добавить товар меню')
+@section('title', 'Добавление меню')
 
 @section('content')
 <h2 class="mb-4">Добавить товар в меню</h2>
@@ -26,13 +26,47 @@
 
     <div class="mb-3">
         <label for="price" class="form-label fw-semibold">Цена (в рублях)</label>
-        <input type="number" name="price" id="price" step="0.01" min="0" value="{{ old('price') }}" class="form-control shadow-sm @error('price') is-invalid @enderror" required>
+        <input type="number" name="price" id="price" step="0.01" min="0" max="99999.99" 
+               value="{{ old('price') }}" 
+               class="form-control shadow-sm @error('price') is-invalid @enderror" 
+               required
+               oninput="validatePrice(this)">
         @error('price')
-        <div class="invalid-feedback">{{ $message }}</div>
+        <div class="invalid-feedback">
+            @if($message == 'validation.max_digits')
+                Цена должна быть не более 99999 рублей
+            @elseif($message == 'validation.max')
+                Максимальная цена - 99999.99
+            @else
+                {{ $message }}
+            @endif
+        </div>
         @enderror
+        <small class="text-muted">Максимум 5 цифр до запятой (макс. 99999.99)</small>
     </div>
 
     <button type="submit" class="btn btn-primary shadow-sm rounded-pill px-4 py-2 fw-semibold">Добавить</button>
     <a href="{{ route('crm1.menu.index') }}" class="btn btn-secondary shadow-sm rounded-pill px-4 py-2 ms-2">Отмена</a>
 </form>
+
+<script>
+function validatePrice(input) {
+    // Получаем значение и разделяем на целую и дробную части
+    let value = input.value;
+    if (value.includes('.')) {
+        let parts = value.split('.');
+        if (parts[0].length > 5) {
+            input.setCustomValidity('Целая часть должна содержать не более 5 цифр');
+        } else {
+            input.setCustomValidity('');
+        }
+    } else {
+        if (value.length > 5) {
+            input.setCustomValidity('Целая часть должна содержать не более 5 цифр');
+        } else {
+            input.setCustomValidity('');
+        }
+    }
+}
+</script>
 @endsection

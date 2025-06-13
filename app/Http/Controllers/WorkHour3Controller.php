@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\WorkHour3;
+use App\Models\Employee3;
+use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Carbon\Carbon;
+
+class WorkHour3Controller extends Controller
+{
+    public function index()
+    {
+        $workHours = WorkHour3::with('employee')->paginate(10); 
+        return view('crm3.workhours.index', compact('workHours'));
+    }
+
+    public function create()
+    {
+        $employees = Employee3::all();
+        return view('crm3.workhours.create', compact('employees'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'employee_id' => 'required|exists:employees3,id',
+            'work_date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        $exists = WorkHour3::where('employee_id', $data['employee_id'])
+            ->where('work_date', $data['work_date'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()
+                ->withErrors(['work_date' => 'Запись для этого сотрудника и даты уже существует'])
+                ->withInput();
+        }
+
+        try {
+            WorkHour3::create($data);
+        } catch (QueryException $e) {
+            if ($e->getCode() == 23000) {
+                return redirect()->route('crm3.workhours.index')
+                    ->with('warning', 'Запись для этого сотрудника и даты уже существует (ошибка игнорирована).');
+            }
+            throw $e;
+        }
+
+        return redirect()->route('crm3.workhours.index')->with('success', 'Рабочие часы добавлены');
+    }
+
+    public function show(WorkHour3 $workhour)
+    {
+        $workhour->load('employee');
+        return view('crm3.workhours.show', compact('workhour'));
+    }
+
+    public function edit(WorkHour3 $workhour)
+    {
+        $employees = Employee3::all();
+        return view('crm3.workhours.edit', compact('workhour', 'employees'));
+    }
+
+    public function update(Request $request, WorkHour3 $workhour)
+    {
+        $data = $request->validate([
+            'employee_id' => 'required|exists:employees3,id',
+            'work_date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        $exists = WorkHour3::where('employee_id', $data['employee_id'])
+            ->where('work_date', $data['work_date'])
+            ->where('id', '!=', $workhour->id)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()
+                ->withErrors(['work_date' => 'Запись для этого сотрудника и даты уже существует'])
+                ->withInput();
+        }
+
+        $workhour->update($data);
+
+        return redirect()->route('crm3.workhours.index')->with('success', 'Рабочие часы обновлены');
+    }
+
+    public function destroy(WorkHour3 $workhour)
+    {
+        $workhour->delete();
+        return redirect()->route('crm3.workhours.index')->with('success', 'Запись успешно удалена.');
+    }
+}
